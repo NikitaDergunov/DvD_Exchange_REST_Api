@@ -1,48 +1,42 @@
 package com.ndergunov.dvdexchange.entity;
 
-import com.sun.istack.NotNull;
-
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 
 @Table(name = "disks", schema = "dvd_exchange")
 public class Disk {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diskID")
-    private int id;
+    private Integer id;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "owner")
-    private int owner;
+
     @Column(name = "TAKEABLE")
-    private boolean takeable;
+    private Boolean takeable;
 
     public Disk() {
         super();
     }
 
 
-    public Disk(int id, String name, int owner, boolean takeable) {
+    public Disk(Integer id, String name, Boolean takeable) {
         super();
         this.id = id;
         this.name = name;
         this.takeable = takeable;
     }
-    public int getOwner() {
-        return owner;
-    }
 
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
 
-    public int getId() {
+
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -54,11 +48,35 @@ public class Disk {
         this.name = name;
     }
 
-    public boolean isTakeable() {
+    public Boolean isTakeable() {
         return takeable;
     }
 
-    public void setTakeable(boolean takeable) {
+    public void setTakeable(Boolean takeable) {
         this.takeable = takeable;
+    }
+
+    @Override
+    public String toString() {
+        return "Disk{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", takeable=" + takeable +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Disk disk = (Disk) o;
+        return Objects.equals(id, disk.id) &&
+                Objects.equals(name, disk.name) &&
+                Objects.equals(takeable, disk.takeable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, takeable);
     }
 }

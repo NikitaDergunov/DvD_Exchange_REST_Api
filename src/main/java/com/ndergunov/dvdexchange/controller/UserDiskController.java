@@ -1,40 +1,55 @@
 package com.ndergunov.dvdexchange.controller;
 
 import com.ndergunov.dvdexchange.entity.Disk;
-import com.ndergunov.dvdexchange.entity.TakenItem;
-import com.ndergunov.dvdexchange.model.DiskExchangeDAO;
+import com.ndergunov.dvdexchange.model.DiskService;
+import com.ndergunov.dvdexchange.model.DvdExchangeException;
+import com.ndergunov.dvdexchange.template.TakenItemTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
 public class UserDiskController {
 
     @Autowired
-    DiskExchangeDAO diskExchangeDAO;
+    DiskService diskService;
 
-    @GetMapping("user/disks/{userid}")
+    @GetMapping("/freedisks")
+    public List<Disk> freedisks(){
+        return diskService.findFreeDisks();
+    }
+
+    @GetMapping("user/{userid}/disks")
     public List<Disk> userDisks(@PathVariable int userid){
 
-        return diskExchangeDAO.findUserDisks(userid);
+        return diskService.findUserDisks(userid);
     }
-    @GetMapping("user/disks/{userid}/{diskid}/settakeable/")
-    public void setTakeble(@PathVariable(name = "userid") int userID, @PathVariable(name ="diskid") int diskID){
-         diskExchangeDAO.setTakeble(userID,diskID);
+    @GetMapping("user/{userid}/disks/{diskid}/settakeable")
+    public String setTakeble(@PathVariable(name = "userid") int userID, @PathVariable(name ="diskid") int diskID){
+        try {
+            diskService.setTakeble(userID,diskID);
+        } catch (DvdExchangeException e) {
+           return e.getMessage();
+        }
+        return String.format("disk %d owned by %d user has been set takeable",diskID,userID);
     }
-    @GetMapping("user/disks/{userid}/{diskid}/take/")
-    public void take(@PathVariable(name = "userid") long userID, @PathVariable(name ="diskid") long diskID){
+    @GetMapping("user/{userid}/disks/{diskid}/take/")
+    public TakenItemTemplate take(@PathVariable(name = "userid") int userID, @PathVariable(name ="diskid") int diskID) throws DvdExchangeException {
+        System.out.println("in rest: disk: " +diskID + " user: " + userID);
+
+            return diskService.takeDisk(userID, diskID);
+
+
     }
-    @GetMapping("user/disks/takenby/{userid}")
-    public List<TakenItem> takenby(@PathVariable String userid){
-        return Collections.emptyList();
+    @GetMapping("user/{userid}/disks/takenby/")
+    public List<TakenItemTemplate> takenby(@PathVariable int userid){
+        return diskService.findTakenDisks(userid);
     }
-    @GetMapping("user/disks/takenfrom/{userid}")
-    public List<TakenItem> takenfrom(@PathVariable String userid){
-        return Collections.emptyList();
+    @GetMapping("user/{userid}/disks/takenfrom/")
+    public List<TakenItemTemplate> takenfrom(@PathVariable int userid){
+        return diskService.findGivenDisks(userid);
     }
 }
