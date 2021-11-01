@@ -8,7 +8,7 @@ import java.util.Objects;
 @Table(name = "disks", schema = "dvd_exchange")
 public class Disk {
     @Id
-   // @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name = "diskID")
     private Integer id;
     @Column(name = "NAME")

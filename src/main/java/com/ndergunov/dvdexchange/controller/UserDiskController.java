@@ -33,7 +33,9 @@ public class UserDiskController {
         String login = authRequest.getLogin();
         String password = authRequest.getPassword();
         try{
+            //try to find user with login and password
         User user = userRepository.loadUserByUsernameAndPassword(login,password);
+        //generate jwt to use in protected url's
         String token = jwtProvider.generateToken(login);
             System.out.println(token);
         return token; }
@@ -41,18 +43,18 @@ public class UserDiskController {
             return ex.getMessage();
         }
     }
-
+    //shows takeable disks
     @GetMapping("/freedisks")
     public List<Disk> freedisks(){
         return diskService.findFreeDisks();
     }
-
+    //shows disks owned by user
     @GetMapping("user/disks")
     public List<Disk> userDisks(HttpServletRequest request){
 
-
         return diskService.findUserDisks(getUserIdFromHttpServletRequest(request));
     }
+    //sets disk takeble if it belongs to a user
     @GetMapping("user/disks/{diskid}/settakeable")
     public String setTakeble(@PathVariable(name ="diskid") int diskID, HttpServletRequest request){
         try {
@@ -62,6 +64,7 @@ public class UserDiskController {
         }
         return String.format("disk %d has been set takeable",diskID);
     }
+    //takes free disk
     @GetMapping("user/disks/{diskid}/take/")
     public TakenItemTemplate take(@PathVariable(name ="diskid") int diskID, HttpServletRequest request) throws DvdExchangeException {
 
@@ -70,15 +73,17 @@ public class UserDiskController {
 
 
     }
+    //shows disks taken by user
     @GetMapping("user/disks/takenby/")
     public List<TakenItemTemplate> takenby(HttpServletRequest request){
         return diskService.findTakenDisks(getUserIdFromHttpServletRequest(request));
     }
+    //shows disks given by user
     @GetMapping("user/disks/takenfrom/")
     public List<TakenItemTemplate> takenfrom(HttpServletRequest request){
         return diskService.findGivenDisks(getUserIdFromHttpServletRequest(request));
     }
-
+    //gets userid from jwt token
     public Integer getUserIdFromHttpServletRequest(HttpServletRequest request){
         String token = jwtFilter.getTokenFromRequest(request);
         String login = jwtProvider.getLoginFromToken(token);

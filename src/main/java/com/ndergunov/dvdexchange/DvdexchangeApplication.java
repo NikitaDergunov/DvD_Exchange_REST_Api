@@ -5,12 +5,15 @@ import com.ndergunov.dvdexchange.entity.Disk;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.Properties;
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +25,21 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = { //
+@EnableAutoConfiguration(exclude = {
 		DataSourceAutoConfiguration.class, //
 		DataSourceTransactionManagerAutoConfiguration.class, //
 		HibernateJpaAutoConfiguration.class })
+
 public class DvdexchangeApplication {
 	@Autowired
 	private Environment env;
@@ -38,8 +48,6 @@ public class DvdexchangeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DvdexchangeApplication.class, args);
 	}
-	//ApplicationContext context = new ClassPathXmlApplicationContext("Context.xml");
-	//Disk disk = (Disk) context.getBean("Disk");
 
 	@Bean(name = "dataSource")
 	public DataSource getDataSource() {
@@ -84,4 +92,5 @@ public class DvdexchangeApplication {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager(sessionFactory);
 		return transactionManager;
 	}
+
 }
