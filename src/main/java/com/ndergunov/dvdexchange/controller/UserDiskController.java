@@ -5,12 +5,15 @@ import com.ndergunov.dvdexchange.entity.User;
 import com.ndergunov.dvdexchange.model.DiskService;
 import com.ndergunov.dvdexchange.model.DvdExchangeException;
 import com.ndergunov.dvdexchange.model.UserRepository;
+import com.ndergunov.dvdexchange.security.jwt.JwtFilter;
 import com.ndergunov.dvdexchange.security.jwt.JwtProvider;
 import com.ndergunov.dvdexchange.template.TakenItemTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -20,6 +23,8 @@ public class UserDiskController {
     DiskService diskService;
     @Autowired
     JwtProvider jwtProvider;
+    @Autowired
+    JwtFilter jwtFilter;
     @Autowired
     UserRepository userRepository;
 
@@ -31,7 +36,7 @@ public class UserDiskController {
         User user = userRepository.loadUserByUsernameAndPassword(login,password);
         String token = jwtProvider.generateToken(login);
             System.out.println(token);
-        return token; /*TODO: add jwt*/}
+        return token; }
         catch (UsernameNotFoundException ex){
             return ex.getMessage();
         }
@@ -42,34 +47,42 @@ public class UserDiskController {
         return diskService.findFreeDisks();
     }
 
-    @GetMapping("user/{userid}/disks")
-    public List<Disk> userDisks(@PathVariable int userid){
+    @GetMapping("user/disks")
+    public List<Disk> userDisks(HttpServletRequest request){
 
-        return diskService.findUserDisks(userid);
+
+        return diskService.findUserDisks(getUserIdFromHttpServletRequest(request));
     }
-    @GetMapping("user/{userid}/disks/{diskid}/settakeable")
-    public String setTakeble(@PathVariable(name = "userid") int userID, @PathVariable(name ="diskid") int diskID){
+    @GetMapping("user/disks/{diskid}/settakeable")
+    public String setTakeble(@PathVariable(name ="diskid") int diskID, HttpServletRequest request){
         try {
-            diskService.setTakeble(userID,diskID);
+            diskService.setTakeble(getUserIdFromHttpServletRequest(request),diskID);
         } catch (DvdExchangeException e) {
            return e.getMessage();
         }
-        return String.format("disk %d owned by %d user has been set takeable",diskID,userID);
+        return String.format("disk %d has been set takeable",diskID);
     }
-    @GetMapping("user/{userid}/disks/{diskid}/take/")
-    public TakenItemTemplate take(@PathVariable(name = "userid") int userID, @PathVariable(name ="diskid") int diskID) throws DvdExchangeException {
+    @GetMapping("user/disks/{diskid}/take/")
+    public TakenItemTemplate take(@PathVariable(name ="diskid") int diskID, HttpServletRequest request) throws DvdExchangeException {
 
 
-            return diskService.takeDisk(userID, diskID);
+            return diskService.takeDisk(getUserIdFromHttpServletRequest(request), diskID);
 
 
     }
-    @GetMapping("user/{userid}/disks/takenby/")
-    public List<TakenItemTemplate> takenby(@PathVariable int userid){
-        return diskService.findTakenDisks(userid);
+    @GetMapping("user/disks/takenby/")
+    public List<TakenItemTemplate> takenby(HttpServletRequest request){
+        return diskService.findTakenDisks(getUserIdFromHttpServletRequest(request));
     }
-    @GetMapping("user/{userid}/disks/takenfrom/")
-    public List<TakenItemTemplate> takenfrom(@PathVariable int userid){
-        return diskService.findGivenDisks(userid);
+    @GetMapping("user/disks/takenfrom/")
+    public List<TakenItemTemplate> takenfrom(HttpServletRequest request){
+        return diskService.findGivenDisks(getUserIdFromHttpServletRequest(request));
+    }
+
+    public Integer getUserIdFromHttpServletRequest(HttpServletRequest request){
+        String token = jwtFilter.getTokenFromRequest(request);
+        String login = jwtProvider.getLoginFromToken(token);
+        User user = userRepository.loadUserByUsername(login);
+        return user.getUserID();
     }
 }
