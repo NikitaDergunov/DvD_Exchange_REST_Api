@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 public class DiskService {
     @Autowired
     HibernateStrategy hibernateStrategy;
+    @Autowired
+    UserRepository userRepository;
 
 
     public List<Disk> findFreeDisks() {

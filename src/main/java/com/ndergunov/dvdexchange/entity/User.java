@@ -1,12 +1,17 @@
 package com.ndergunov.dvdexchange.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users", schema = "dvd_exchange")
-public class User {
+public class User implements UserDetails {
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userID")
@@ -14,13 +19,14 @@ public class User {
     @Column(name = "login")
     private String login;
     @Column(name = "password")
-    private byte[] password;
-
+    private String password;
+    @Transient
+    private boolean enabled = true;
     public User(){
         super();
     }
 
-    public User(Integer userID, String login, byte[] password) {
+    public User(Integer userID, String login, String password) {
         this.userID = userID;
         this.login = login;
         this.password = password;
@@ -42,12 +48,41 @@ public class User {
         this.login = login;
     }
 
-    public byte[] getPassword() {
+    public String getPassword() {
         return password;
+   }
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setPassword(byte[] password) {
-        this.password = password;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new HashSet<>();
+    }
+
+    @Override
+    public String getUsername() {
+        return login;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return enabled;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return enabled;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return enabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -55,7 +90,7 @@ public class User {
         return "User{" +
                 "userID=" + userID +
                 ", login='" + login + '\'' +
-                ", password=" + Arrays.toString(password) +
+                ", password=" + password +
                 '}';
     }
 
@@ -66,13 +101,13 @@ public class User {
         User user = (User) o;
         return Objects.equals(userID, user.userID) &&
                 Objects.equals(login, user.login) &&
-                Arrays.equals(password, user.password);
+                Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(userID, login);
-        result = 31 * result + Arrays.hashCode(password);
+        result = 31 * result + Objects.hashCode(password);
         return result;
     }
 }

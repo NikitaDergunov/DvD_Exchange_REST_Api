@@ -30,10 +30,7 @@ public class DaoTests {
 
     @Before
     public  void setUp(){
-       // hibernateStrategy.getUserByID()
-        System.out.println("init //////////////////////////////");
-
-         testuser = new User(1000,"testuser_junit",null);
+               testuser = new User(1000,"testuser_junit",null);
         User testuser1 = new User(1001,"testuser2_junit",null);
          testdisk = new Disk(1000,"testdisk_junit",true);
          testTakenitem = new TakenItem(1000,testuser,testuser1,testdisk);
@@ -60,7 +57,6 @@ public class DaoTests {
     public void CtakeDiskTest() throws DvdExchangeException {
         TakenItem ti = hibernateStrategy.takeDisk(1000,1000);
         Assertions.assertTrue(ti.getCurrent_user().getUserID()==1000);
-        System.out.println("SO WE TOOK AND PREV IS: " + ti.getPrevious_user().getUserID());
         Assertions.assertTrue(!ti.getDisk().isTakeable());
     }
     @Test
@@ -74,8 +70,6 @@ public class DaoTests {
     public void EgivenDisksTest(){
         List<TakenItem> ti = hibernateStrategy.findGivenDisks(1001);
         Assertions.assertTrue(ti.size()>0);
-        System.out.println("GIVEN DISKS");
-        ti.stream().forEach(System.out::println);
         Assertions.assertTrue(ti.stream().anyMatch(x->x.getPrevious_user().getUserID()==1001));
     }
     @Test
