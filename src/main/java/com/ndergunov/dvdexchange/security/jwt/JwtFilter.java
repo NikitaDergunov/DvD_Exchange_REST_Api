@@ -1,6 +1,6 @@
 package com.ndergunov.dvdexchange.security.jwt;
 
-import com.ndergunov.dvdexchange.model.UserRepository;
+import com.ndergunov.dvdexchange.model.hibernate.HibernateUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +21,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class JwtFilter extends GenericFilterBean {
     public static final String AUTHORIZATION = "Authorization";
     @Autowired
-    UserRepository userRepository;
+    HibernateUserRepository hibernateUserRepository;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -31,7 +31,7 @@ public class JwtFilter extends GenericFilterBean {
         String token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (token != null && jwtProvider.validateToken(token)) {
             String userLogin = jwtProvider.getLoginFromToken(token);
-            UserDetails userDetails = userRepository.loadUserByUsername(userLogin);
+            UserDetails userDetails = hibernateUserRepository.loadUserByUsername(userLogin);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

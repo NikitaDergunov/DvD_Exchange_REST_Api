@@ -1,8 +1,10 @@
-package com.ndergunov.dvdexchange.model;
+package com.ndergunov.dvdexchange.model.hibernate;
 
 import com.ndergunov.dvdexchange.entity.Disk;
 import com.ndergunov.dvdexchange.entity.TakenItem;
 import com.ndergunov.dvdexchange.entity.User;
+import com.ndergunov.dvdexchange.model.DAOStrategy;
+import com.ndergunov.dvdexchange.model.DvdExchangeException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @Transactional
-public class HibernateStrategy implements DAOStrategy{
+public class HibernateStrategy implements DAOStrategy {
     @Autowired
     private SessionFactory sessionFactory;
 //TO DO: Add exceptions

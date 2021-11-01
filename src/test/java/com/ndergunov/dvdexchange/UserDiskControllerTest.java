@@ -11,7 +11,6 @@ public class UserDiskControllerTest {
     @Autowired
     UserDiskController userDiskController;
 
-
     @Test
     public void contextLoads() throws Exception {
         assertThat(userDiskController).isNotNull();

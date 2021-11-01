@@ -4,7 +4,7 @@ import com.ndergunov.dvdexchange.entity.Disk;
 import com.ndergunov.dvdexchange.entity.TakenItem;
 import com.ndergunov.dvdexchange.entity.User;
 import com.ndergunov.dvdexchange.model.DvdExchangeException;
-import com.ndergunov.dvdexchange.model.HibernateStrategy;
+import com.ndergunov.dvdexchange.model.hibernate.HibernateStrategy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;

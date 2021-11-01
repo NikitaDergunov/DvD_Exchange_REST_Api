@@ -1,4 +1,4 @@
-package com.ndergunov.dvdexchange.model;
+package com.ndergunov.dvdexchange.model.hibernate;
 
 import com.ndergunov.dvdexchange.entity.User;
 import org.hibernate.Session;
@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 
 @Repository
 @Transactional
-public class UserRepository {
+public class HibernateUserRepository {
     @Autowired
     SessionFactory sessionFactory;
     public User loadUserByUsername(String username) throws UsernameNotFoundException{

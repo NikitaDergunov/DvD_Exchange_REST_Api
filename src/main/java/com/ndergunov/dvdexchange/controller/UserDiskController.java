@@ -4,13 +4,12 @@ import com.ndergunov.dvdexchange.entity.Disk;
 import com.ndergunov.dvdexchange.entity.User;
 import com.ndergunov.dvdexchange.model.DiskService;
 import com.ndergunov.dvdexchange.model.DvdExchangeException;
-import com.ndergunov.dvdexchange.model.UserRepository;
+import com.ndergunov.dvdexchange.model.hibernate.HibernateUserRepository;
 import com.ndergunov.dvdexchange.security.jwt.JwtFilter;
 import com.ndergunov.dvdexchange.security.jwt.JwtProvider;
 import com.ndergunov.dvdexchange.template.TakenItemTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,14 +25,14 @@ public class UserDiskController {
     @Autowired
     JwtFilter jwtFilter;
     @Autowired
-    UserRepository userRepository;
+    HibernateUserRepository hibernateUserRepository;
 
     @PostMapping("/auth")
     public String auth(@RequestBody AuthRequest authRequest){
         String login = authRequest.getLogin();
         String password = authRequest.getPassword();
         try{
-        User user = userRepository.loadUserByUsernameAndPassword(login,password);
+        User user = hibernateUserRepository.loadUserByUsernameAndPassword(login,password);
         String token = jwtProvider.generateToken(login);
             System.out.println(token);
         return token; }
@@ -82,7 +81,7 @@ public class UserDiskController {
     public Integer getUserIdFromHttpServletRequest(HttpServletRequest request){
         String token = jwtFilter.getTokenFromRequest(request);
         String login = jwtProvider.getLoginFromToken(token);
-        User user = userRepository.loadUserByUsername(login);
+        User user = hibernateUserRepository.loadUserByUsername(login);
         return user.getUserID();
     }
 }
