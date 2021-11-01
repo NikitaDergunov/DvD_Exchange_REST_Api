@@ -11,6 +11,8 @@ import java.util.List;
 
 @Repository
 public interface TakenItemRepository extends CrudRepository<TakenItem,Integer> {
-    List<TakenItem> findAllByCurrent_user(User current_user);
-    List<TakenItem> findAllByPrevious_user(User previous_user);
+    List<TakenItem> findAllByCurrent(User current);
+    List<TakenItem> findAllByPrevious(User previous);
+    boolean existsByCurrentAndDisk(User currnt,Disk disk);
+    TakenItem findByDisk(Disk disk);
 }

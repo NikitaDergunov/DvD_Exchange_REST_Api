@@ -12,11 +12,11 @@ public class TakenItem {
     private Integer id;
 
     @OneToOne(optional=false, cascade=CascadeType.ALL)
-    @JoinColumn(name = "current_", referencedColumnName = "userID")
-    private User current_user;
+    @JoinColumn(name = "current", referencedColumnName = "userID")
+    private User current;
     @OneToOne(optional=false, cascade=CascadeType.ALL)
-    @JoinColumn(name = "previous_", referencedColumnName = "userID")
-    private User previous_user;
+    @JoinColumn(name = "previous", referencedColumnName = "userID")
+    private User previous;
     @OneToOne(optional=false, cascade=CascadeType.ALL)
     @JoinColumn(name = "disk", referencedColumnName = "diskID")
     private Disk disk;
@@ -24,10 +24,10 @@ public class TakenItem {
         super();
     }
 
-    public TakenItem(Integer id, User current_user, User previous_user, Disk disk) {
+    public TakenItem(Integer id, User current, User previous, Disk disk) {
         this.id = id;
-        this.current_user = current_user;
-        this.previous_user = previous_user;
+        this.current = current;
+        this.previous = previous;
         this.disk = disk;
     }
 
@@ -39,20 +39,20 @@ public class TakenItem {
         this.id = id;
     }
 
-    public User getCurrent_user() {
-        return current_user;
+    public User getCurrent() {
+        return current;
     }
 
-    public void setCurrent_user(User current_user) {
-        this.current_user = current_user;
+    public void setCurrent(User current_user) {
+        this.current = current_user;
     }
 
-    public User getPrevious_user() {
-        return previous_user;
+    public User getPrevious() {
+        return previous;
     }
 
-    public void setPrevious_user(User previous_user) {
-        this.previous_user = previous_user;
+    public void setPrevious(User previous_user) {
+        this.previous = previous_user;
     }
 
     public Disk getDisk() {
@@ -67,8 +67,8 @@ public class TakenItem {
     public String toString() {
         return "TakenItem{" +
                 "id=" + id +
-                ", current_user=" + current_user.toString() +
-                ", previous_user=" + previous_user.toString() +
+                ", current_user=" + current.toString() +
+                ", previous_user=" + previous.toString() +
                 ", disk=" + disk.toString() +
                 '}';
     }
@@ -79,13 +79,13 @@ public class TakenItem {
         if (o == null || getClass() != o.getClass()) return false;
         TakenItem takenItem = (TakenItem) o;
         return Objects.equals(id, takenItem.id) &&
-                Objects.equals(current_user, takenItem.current_user) &&
-                Objects.equals(previous_user, takenItem.previous_user) &&
+                Objects.equals(current, takenItem.current) &&
+                Objects.equals(previous, takenItem.previous) &&
                 Objects.equals(disk, takenItem.disk);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, current_user, previous_user, disk);
+        return Objects.hash(id, current, previous, disk);
     }
 }

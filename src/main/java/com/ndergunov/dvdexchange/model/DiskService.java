@@ -1,8 +1,8 @@
 package com.ndergunov.dvdexchange.model;
 
 import com.ndergunov.dvdexchange.entity.Disk;
-import com.ndergunov.dvdexchange.model.hibernate.HibernateStrategy;
-import com.ndergunov.dvdexchange.model.hibernate.HibernateUserRepository;
+
+import com.ndergunov.dvdexchange.model.jpa.JPAStrategyService;
 import com.ndergunov.dvdexchange.template.TakenItemTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,9 +13,8 @@ import java.util.stream.Collectors;
 @Service
 public class DiskService {
     @Autowired
-    HibernateStrategy diskStrategy;
-    @Autowired
-    HibernateUserRepository userRepository;
+    JPAStrategyService diskStrategy;
+
 
 
     public List<Disk> findFreeDisks() {
@@ -29,7 +28,8 @@ public class DiskService {
 
 
     public List<TakenItemTemplate> findTakenDisks(int userID) {
-        return diskStrategy.findTakenDisks(userID).stream().map(TakenItemTemplate::new).collect(Collectors.toList());
+        List<TakenItemTemplate> tit = diskStrategy.findTakenDisks(userID).stream().map(TakenItemTemplate::new).collect(Collectors.toList());
+        return tit;
     }
 
 

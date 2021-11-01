@@ -1,7 +1,9 @@
 package com.ndergunov.dvdexchange;
 
 import com.ndergunov.dvdexchange.entity.User;
-import com.ndergunov.dvdexchange.model.hibernate.HibernateStrategy;
+
+import com.ndergunov.dvdexchange.model.jpa.JPAStrategyService;
+import com.ndergunov.dvdexchange.model.jpa.UserRepository;
 import com.ndergunov.dvdexchange.security.jwt.JwtFilter;
 import com.ndergunov.dvdexchange.security.jwt.JwtProvider;
 import org.junit.Assert;
@@ -20,12 +22,14 @@ public class JwtTests {
     @Autowired
     JwtFilter jwtFilter;
     @Autowired
-    HibernateStrategy hibernateStrategy;
+    JPAStrategyService hibernateStrategy;
+    @Autowired
+    UserRepository userRepository;
     User testuser;
     @Before
     public void setTestUser(){
         testuser = new User(1000,"jwt_test_user","12345");
-        hibernateStrategy.addUser(testuser);
+        userRepository.save(testuser);
     }
     @Test
     public void jwtProviderTest(){

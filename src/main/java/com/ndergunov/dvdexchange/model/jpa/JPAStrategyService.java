@@ -33,27 +33,48 @@ public class JPAStrategyService implements DAOStrategy {
     @Override
     public List<TakenItem> findTakenDisks(int userID) {
         User user = userRepository.findById(userID).get();
-        return takenItemRepository.findAllByCurrent_user(user);
+        return takenItemRepository.findAllByCurrent(user);
     }
 
     @Override
     public List<TakenItem> findGivenDisks(int userID) {
         User user = userRepository.findById(userID).get();
-        return takenItemRepository.findAllByPrevious_user(user);
+        return takenItemRepository.findAllByPrevious(user);
     }
 
     @Override
     public Disk setTakeble(int userID, int diskID) throws DvdExchangeException {
-        return null;
+        User user = userRepository.findById(userID).get();
+        Disk disk = diskRepository.findById(diskID).get();
+
+        if(takenItemRepository.existsByCurrentAndDisk(user,disk)){
+            disk.setTakeable(true);
+            diskRepository.save(disk);
+            return disk;
+        }
+        throw new DvdExchangeException("Disk doesn't belong to user");
     }
 
     @Override
     public TakenItem takeDisk(int userID, int diskID) throws DvdExchangeException {
-        return null;
+        User user = userRepository.findById(userID).get();
+        Disk disk = diskRepository.findById(diskID).get();
+        if(disk.isTakeable()){
+            TakenItem ti = takenItemRepository.findByDisk(disk);
+            User prev = ti.getCurrent();
+            ti.setCurrent(user);
+            ti.setPrevious(prev);
+            disk.setTakeable(false);
+            ti.setDisk(disk);
+            takenItemRepository.save(ti);
+            diskRepository.save(disk);
+            return ti;
+        }
+        throw new DvdExchangeException("disk is not takeable");
     }
 
     @Override
     public User getUserByID(int userID) {
-        return null;
+        return userRepository.findById(userID).get();
     }
 }

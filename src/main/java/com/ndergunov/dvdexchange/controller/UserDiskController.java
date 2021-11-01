@@ -4,11 +4,13 @@ import com.ndergunov.dvdexchange.entity.Disk;
 import com.ndergunov.dvdexchange.entity.User;
 import com.ndergunov.dvdexchange.model.DiskService;
 import com.ndergunov.dvdexchange.model.DvdExchangeException;
-import com.ndergunov.dvdexchange.model.hibernate.HibernateUserRepository;
+
+import com.ndergunov.dvdexchange.model.jpa.UserRepository;
 import com.ndergunov.dvdexchange.security.jwt.JwtFilter;
 import com.ndergunov.dvdexchange.security.jwt.JwtProvider;
 import com.ndergunov.dvdexchange.template.TakenItemTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,20 +27,20 @@ public class UserDiskController {
     @Autowired
     JwtFilter jwtFilter;
     @Autowired
-    HibernateUserRepository hibernateUserRepository;
+    UserRepository hibernateUserRepository;
 
     @PostMapping("/auth")
     public String auth(@RequestBody AuthRequest authRequest){
         String login = authRequest.getLogin();
         String password = authRequest.getPassword();
-        try{
-        User user = hibernateUserRepository.loadUserByUsernameAndPassword(login,password);
+
+           if(hibernateUserRepository.existsByLoginAndPassword(login,password)){
+        User user = hibernateUserRepository.findByLoginAndPassword(login,password);
         String token = jwtProvider.generateToken(login);
             System.out.println(token);
-        return token; }
-        catch (UsernameNotFoundException ex){
-            return ex.getMessage();
-        }
+        return token;
+           }
+           else throw new AccessDeniedException("wrong username and/or password");
     }
 
     @GetMapping("/freedisks")
@@ -81,7 +83,7 @@ public class UserDiskController {
     public Integer getUserIdFromHttpServletRequest(HttpServletRequest request){
         String token = jwtFilter.getTokenFromRequest(request);
         String login = jwtProvider.getLoginFromToken(token);
-        User user = hibernateUserRepository.loadUserByUsername(login);
+        User user = hibernateUserRepository.findByLogin(login);
         return user.getUserID();
     }
 }

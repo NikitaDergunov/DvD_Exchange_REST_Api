@@ -9,12 +9,12 @@ public class TakenItemTemplate {
     public TakenItemTemplate(TakenItem takenItem) {
         this.disk = takenItem.getDisk().getName();
         try {
-        this.previous = takenItem.getPrevious_user().getLogin();
+        this.previous = takenItem.getPrevious().getLogin();
         }catch (NullPointerException ex){
             this.previous=null;
         }
         try{
-        this.current = takenItem.getCurrent_user().getLogin();
+        this.current = takenItem.getCurrent().getLogin();
         }catch (NullPointerException ex){
             this.current = null;
         }
