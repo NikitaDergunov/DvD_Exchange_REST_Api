@@ -1,10 +1,13 @@
 package com.ndergunov.dvdexchange.model.jpa;
 
+import com.ndergunov.dvdexchange.controller.UserDiskController;
 import com.ndergunov.dvdexchange.entity.Disk;
 import com.ndergunov.dvdexchange.entity.TakenItem;
 import com.ndergunov.dvdexchange.entity.User;
 import com.ndergunov.dvdexchange.model.DAOStrategy;
 import com.ndergunov.dvdexchange.model.DvdExchangeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class JPAStrategyService implements DAOStrategy {
+    Logger logger = LoggerFactory.getLogger(JPAStrategyService.class);
     @Autowired
     TakenItemRepository takenItemRepository;
     @Autowired
@@ -52,6 +56,7 @@ public class JPAStrategyService implements DAOStrategy {
             diskRepository.save(disk);
             return disk;
         }
+        logger.warn("service encountered conflict: user doesnt own disk");
         throw new DvdExchangeException("Disk doesn't belong to user");
     }
 
@@ -70,6 +75,7 @@ public class JPAStrategyService implements DAOStrategy {
             diskRepository.save(disk);
             return ti;
         }
+        logger.warn("disk is not takeable");
         throw new DvdExchangeException("disk is not takeable");
     }
 

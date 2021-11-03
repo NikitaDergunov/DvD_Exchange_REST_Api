@@ -3,6 +3,8 @@ package com.ndergunov.dvdexchange.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +13,7 @@ import java.time.ZoneId;
 import java.util.Date;
 @Component
 public class JwtProvider {
+    Logger logger = LoggerFactory.getLogger(JwtProvider.class);
     @Value("$(jwt.secret)")
     private String secret;
     public String generateToken(String login) {
@@ -27,7 +30,7 @@ public class JwtProvider {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            //log.severe("invalid token");
+            logger.warn("invalid token");
         }
         return false;
     }
