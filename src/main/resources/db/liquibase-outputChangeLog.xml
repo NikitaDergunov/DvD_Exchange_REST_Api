@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="Никита (generated)" id="1636114744220-1">
+        <createTable tableName="disks">
+            <column name="diskid" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="TEXT"/>
+            <column name="takeable" type="BOOL"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-2">
+        <createTable tableName="takenitem">
+            <column name="id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current" type="INT"/>
+            <column name="previous" type="INT"/>
+            <column name="disk" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-3">
+        <createTable tableName="users">
+            <column name="userid" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="login" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-4">
+        <addPrimaryKey columnNames="diskid" constraintName="disks_pk" tableName="disks"/>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-5">
+        <addPrimaryKey columnNames="id" constraintName="table_name_pk" tableName="takenitem"/>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-6">
+        <addPrimaryKey columnNames="userid" constraintName="users_pk" tableName="users"/>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-7">
+        <createIndex indexName="users_login_uindex" tableName="users" unique="true">
+            <column name="login"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-8">
+        <addForeignKeyConstraint baseColumnNames="disk" baseTableName="takenitem" constraintName="table_name_disks_diskid_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="diskid" referencedTableName="disks"/>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-9">
+        <addForeignKeyConstraint baseColumnNames="previous" baseTableName="takenitem" constraintName="table_name_users_userid_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="userid" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="Никита (generated)" id="1636114744220-10">
+        <addForeignKeyConstraint baseColumnNames="current" baseTableName="takenitem" constraintName="table_name_users_userid_fk_2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="userid" referencedTableName="users"/>
+    </changeSet>
+</databaseChangeLog>
